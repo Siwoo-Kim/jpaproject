@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--enable transaction-annotation-->
+    <tx:annotation-driven />
+
+    <context:component-scan base-package="com.siwoo.application.service, com.siwoo.application.repository" />
+
+    <!--connection-pool datasource -->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
+          p:driverClassName="org.h2.Driver"
+          p:url="jdbc:h2:mem:jpaproject"
+          p:username="sa"
+          p:password="" />
+
+    <!--jpa transaction manager-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+        p:dataSource-ref="dataSource" />
+
+    <!--translator for database exception-->
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+    <!--entity manager creator (hibernate)-->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:packagesToScan="com.siwoo.application.domain"
+          p:dataSource-ref="dataSource"
+          p:jpaProperties-ref="jpaProperties">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+    </bean>
+
+    <util:properties id="jpaProperties">
+        <prop key="hibernate.dialect">
+            org.hibernate.dialect.H2Dialect
+        </prop>
+        <prop key="hibernate.show_sql">
+            true
+        </prop>
+        <prop key="hibernate.format_sql">
+            true
+        </prop>
+        <!--hibernate new allocation size strategy for sequence-->
+        <prop key="hibernate.id.new_generator_mappings">
+            true
+        </prop>
+        <prop key="hibernate.hbm2ddl.auto">
+            create
+        </prop>
+    </util:properties>
+</beans>
