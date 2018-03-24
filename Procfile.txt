@@ -1,0 +1,1 @@
+web: java -jar target/jpaproject-1.0-SNAPSHOT.war
