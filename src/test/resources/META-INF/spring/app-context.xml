@@ -18,10 +18,11 @@
 
     <!--connection-pool datasource -->
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
-          p:driverClassName="org.h2.Driver"
-          p:url="jdbc:h2:mem:jpaproject"
-          p:username="sa"
-          p:password="" />
+          p:driverClassName="org.postgresql.Driver">
+        <property name="url" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() }"/>
+        <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
+        <property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
+    </bean>
 
     <!--jpa transaction manager-->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
@@ -42,7 +43,7 @@
 
     <util:properties id="jpaProperties">
         <prop key="hibernate.dialect">
-            org.hibernate.dialect.H2Dialect
+            org.hibernate.dialect.PostgreSQL94Dialect
         </prop>
         <prop key="hibernate.show_sql">
             true
